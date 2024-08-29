@@ -8,6 +8,7 @@ import Settings from './pages/Settings.jsx';
 import Game from './pages/Game.jsx';
 import Register from './pages/Register.jsx';
 import Login from './pages/Login.jsx';
+import PrivateRoute from './components/PrivateRoute';
 
 const router = createBrowserRouter([
   {
@@ -16,18 +17,26 @@ const router = createBrowserRouter([
   },
   {
     path: '/settings',
-    element: <Settings />,
+    element: (
+      <PrivateRoute>
+        <Settings />
+      </PrivateRoute>
+    ),
   },
   {
-    path: '/game',
-    element: <Game />,
+    path: '/game/:gameId',
+    element: (
+      <PrivateRoute>
+        <Game />
+      </PrivateRoute>
+    ),
   },
   {
-    path: '/Register',
+    path: '/register',
     element: <Register />,
   },
   {
-    path: '/Login',
+    path: '/login',
     element: <Login />,
   }
 ]);
