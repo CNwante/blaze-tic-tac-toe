@@ -1,17 +1,30 @@
 import { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import DecorativeElements from '../components/DecorativeElements';
 import SettingButton from '../components/SettingButton';
-import PrimaryButton from '../components/PrimaryButton';
 
-function Settings() {
+const CreateGame = ({ username }) => {
   const [gameMode, setGameMode] = useState('PvC');
   const [gridSize, setGridSize] = useState(3);
-  const [player1, setPlayer1] = useState('');
-  const [player2, setPlayer2] = useState('');
+  const [gameData, setGameData] = useState(null);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-  // const handleStartGame = () => {
-  //   console.log({ gameMode, gridSize, player1, player2 });
-  // };
+  const handleCreateGame = async () => {
+    try {
+      const response = await axios.post('http://localhost:3000/api/games/create');
+
+      // Log the response for debugging
+      console.log(response.data);
+
+      setGameData(response.data);
+      setError('');
+      navigate(`/game/${response.data.gameId}`); // Redirect to the game board using the gameId from the response
+    } catch (err) {
+      setError(err.response?.data?.message || 'Error creating game');
+    }
+  };
 
   return (
     <div className="flex justify-center items-center h-screen bg-[#1b1b32] relative overflow-hidden">
@@ -46,35 +59,21 @@ function Settings() {
               ))}
             </div>
           </div>
-          <div className="mb-6">
-            <p className="text-gray-300 font-semibold mb-2">Player names:</p>
-            <div className="space-y-4">
-              <input
-                type="text"
-                placeholder="Player 1 - X"
-                value={player1}
-                onChange={(e) => setPlayer1(e.target.value)}
-                className="w-full py-2 px-4 rounded-lg bg-gray-700 text-white focus:outline-none"
-                required
-              />
-              <input
-                type="text"
-                placeholder="Player 2 - O"
-                value={player2}
-                onChange={(e) => setPlayer2(e.target.value)}
-                className="w-full py-2 px-4 rounded-lg bg-gray-700 text-white focus:outline-none"
-                required
-              />
-            </div>
-          </div>
+          {/* Other settings and options here */}
         </div>
 
-        <PrimaryButton href="/game" label="Let the game begin!" />
+        <button
+          className="bg-[#0074fc] hover:bg-[#0051ad] text-white py-2 px-4 rounded-lg shadow-lg transition duration-300 transform hover:scale-105 mt-6"
+          onClick={handleCreateGame}
+        >
+          Let the game begin!
+        </button>
+        {error && <p style={{ color: 'red' }}>{error}</p>}
       </div>
 
       <DecorativeElements />
     </div>
   );
-}
+};
 
-export default Settings;
+export default CreateGame;
